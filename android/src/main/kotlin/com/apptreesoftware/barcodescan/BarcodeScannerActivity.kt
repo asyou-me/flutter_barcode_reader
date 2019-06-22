@@ -5,7 +5,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.widget.Button
+import android.widget.ImageButton
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.zxing.Result
@@ -17,6 +17,7 @@ class BarcodeScannerActivity : Activity(), ZXingScannerView.ResultHandler {
 
     lateinit var scannerView: ZXingScannerView
     private var mFlash: Boolean = false
+    lateinit var light: ImageButton
 
     companion object {
         val REQUEST_TAKE_PHOTO_CAMERA_PERMISSION = 100
@@ -31,7 +32,7 @@ class BarcodeScannerActivity : Activity(), ZXingScannerView.ResultHandler {
         scannerView.setAutoFocus(true)
         scannerView.setAspectTolerance(0.5f)
 
-        val light = findViewById<Button>(R.id.light)
+        light = findViewById<ImageButton>(R.id.light)
         light.setOnClickListener {
             toggleFlash()
         }
@@ -40,6 +41,12 @@ class BarcodeScannerActivity : Activity(), ZXingScannerView.ResultHandler {
     private fun toggleFlash() {
         mFlash = !mFlash
         scannerView.setFlash(mFlash)
+        if(mFlash){
+            light.setImageResource(R.drawable.on)
+        }else{
+            light.setImageResource(R.drawable.off)
+        }
+
     }
 
 
