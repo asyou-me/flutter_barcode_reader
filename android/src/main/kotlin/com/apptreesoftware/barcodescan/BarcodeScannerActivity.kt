@@ -5,59 +5,69 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.widget.Button
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import android.view.Menu
-import android.view.MenuItem
 import com.google.zxing.Result
+import com.yourcompany.barcodescan.R
 import me.dm7.barcodescanner.zxing.ZXingScannerView
 
 
 class BarcodeScannerActivity : Activity(), ZXingScannerView.ResultHandler {
 
-    lateinit var scannerView: me.dm7.barcodescanner.zxing.ZXingScannerView
+    lateinit var scannerView: ZXingScannerView
+    private var mFlash: Boolean = false
 
     companion object {
         val REQUEST_TAKE_PHOTO_CAMERA_PERMISSION = 100
         val TOGGLE_FLASH = 200
-
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        title = ""
-        scannerView = ZXingScannerView(this)
+        setContentView(R.layout.main)
+        scannerView = findViewById(R.id.scannerView)
+
         scannerView.setAutoFocus(true)
-        // this paramter will make your HUAWEI phone works great!
         scannerView.setAspectTolerance(0.5f)
-        setContentView(scannerView)
+
+        val light = findViewById<Button>(R.id.light)
+        light.setOnClickListener {
+            toggleFlash()
+        }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        if (scannerView.flash) {
-            val item = menu.add(0,
-                    TOGGLE_FLASH, 0, "Flash Off")
-            item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
-        } else {
-            val item = menu.add(0,
-                    TOGGLE_FLASH, 0, "Flash On")
-            item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
-        }
-        return super.onCreateOptionsMenu(menu)
+    private fun toggleFlash() {
+        mFlash = !mFlash
+        scannerView.setFlash(mFlash)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == TOGGLE_FLASH) {
-            scannerView.flash = !scannerView.flash
-            this.invalidateOptionsMenu()
-            return true
-        }
-        return super.onOptionsItemSelected(item)
-    }
+
+//    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+//        if (scannerView.flash) {
+//            val item = menu.add(0,
+//                    TOGGLE_FLASH, 0, "关闭闪光灯")
+//            item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+//        } else {
+//            val item = menu.add(0,
+//                    TOGGLE_FLASH, 0, "闪光灯")
+//            item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+//        }
+//        return super.onCreateOptionsMenu(menu)
+//    }
+
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+//        if (item.itemId == TOGGLE_FLASH) {
+//            scannerView.flash = !scannerView.flash
+//            this.invalidateOptionsMenu()
+//            return true
+//        }
+//        return super.onOptionsItemSelected(item)
+//    }
 
     override fun onResume() {
         super.onResume()
-        scannerView.setResultHandler(this)
+//        scannerView.setResultHandler(this)
         // start camera immediately if permission is already given
         if (!requestCameraAccessIfNecessary()) {
             scannerView.startCamera()
